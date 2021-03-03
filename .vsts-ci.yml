@@ -1,0 +1,19 @@
+queue: Hosted VS2017
+ 
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - azure.datafactory.tools/*
+ 
+steps:
+  - task: NuGetToolInstaller@0
+    displayName: "Install nuget.exe and add to PATH"
+    inputs:
+        versionSpec: 4.6.4
+ 
+  - powershell: .\build.ps1
+    displayName: "Publish PowerShell module"
+    failOnStderr: true
