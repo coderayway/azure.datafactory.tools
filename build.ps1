@@ -21,5 +21,5 @@ Register-PSRepository -Name "VSTSGallery" -SourceLocation "https://mangrovedata.
 C:\Tools\nuget.exe sources add -name 'DBAGalleryFeed' -Source 'https://mangrovedata.pkgs.visualstudio.com/MangroveDataFactory/_packaging/adf-powershell-cdci/nuget/v2' -UserName $patUser -Password $patToken
 
 
-Publish-Module -Path "azure.datafactory.tools" -Repository 'VSTSGallery' -Credential $credential -NuGetApiKey 'nmkxmmvdbczasdmee5xplhnpsqfr4dmejaiwlecst3iysgoq4iqq' -Verbose
+Publish-Module -Path "azure.datafactory.tools" -Repository 'VSTSGallery' -Credential $credential -NuGetApiKey $patToken -Verbose
 
