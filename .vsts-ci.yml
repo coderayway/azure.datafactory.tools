@@ -9,6 +9,36 @@ trigger:
     - azure.datafactory.tools/*
  
 steps:
+   # Powershell to get the Key Vault secrets  
+  task: AzurePowerShell@4
+    name: GetPSLibraryPatToken
+    inputs:
+      azureSubscription: $(azureSubscriptionSPN) #Required. Name of Azure Resource Manager service connection
+      scriptType: 'InlineScript'
+      inline: | 
+      $username = (Get-AzKeyVaultSecret -vaultName "$Env:environmentName-kv-con01" -name "adf-ps-library-pat").SecretValueText
+      $var = "##vso[task.setvariable variable=PatToken;isOutput=true]$ObjectId"
+      echo $var
+      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+                
+  - script: echo $(GetPSLibraryPatToken.PatToken) 
+    name: echoPSLibraryPatToken
+    
+            # Powershell to get the Key Vault secrets  
+  task: AzurePowerShell@4
+    name: GetPSLibraryPatUser
+    inputs:
+      azureSubscription: $(azureSubscriptionSPN) #Required. Name of Azure Resource Manager service connection
+      scriptType: 'InlineScript'
+      inline: | 
+      $username = (Get-AzKeyVaultSecret -vaultName "$Env:environmentName-kv-con01" -name "adf-ps-library-user").SecretValueText
+      $var = "##vso[task.setvariable variable=PatUser;isOutput=true]$ObjectId"
+      echo $var
+      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+                
+  - script: echo $(GetPSLibraryPatUser.PatUser) 
+    name: echoPSLibraryPatUser
+    
   - task: NuGetToolInstaller@0
     displayName: "Install nuget.exe and add to PATH"
     inputs:
@@ -16,4 +46,7 @@ steps:
  
   - powershell: .\build.ps1
     displayName: "Publish PowerShell module"
+    scriptArguments:
+      $(GetPSLibraryPatUser.PatUser) `
+      $(GetPSLibraryPatToken.PatToken) 
     failOnStderr: true
